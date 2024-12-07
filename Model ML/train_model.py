@@ -20,7 +20,6 @@ def train_and_save_model(dataset_name, model_path):
         file_list = z.namelist()
 
         for file in file_list:
-            # Filter only image files
             if file.endswith((".png", ".jpg", ".jpeg")):
                 with z.open(file) as image_file:
                     image_bytes = io.BytesIO(image_file.read())

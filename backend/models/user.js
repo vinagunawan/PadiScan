@@ -1,47 +1,29 @@
-const db = require('../db/connection');
-const bcrypt = require('bcrypt');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const User = {
-  register: async (nama, email, password, callback) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO pengguna (nama, email, password) VALUES (?, ?, ?)';
-    db.query(query, [nama, email, hashedPassword], (err, results) => {
-      if (err) {
-        callback(err, null);
-      } else {
-        callback(null, results);
-      }
-    });
+const User = sequelize.define('User', {
+  id_user: { // Sesuaikan dengan kolom primary key
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true, // Agar auto increment
   },
-
-  login: (email, password, callback) => {
-    const query = 'SELECT * FROM pengguna WHERE email = ?';
-    db.query(query, [email], async (err, results) => {
-      if (err) {
-        callback(err, null);
-      } else if (results.length === 0) {
-        callback(null, { success: false, message: 'Email not found' });
-      } else {
-        const isPasswordMatch = await bcrypt.compare(password, results[0].password);
-        if (isPasswordMatch) {
-          callback(null, { success: true, user: results[0] });
-        } else {
-          callback(null, { success: false, message: 'Invalid password' });
-        }
-      }
-    });
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
   },
-
-  findById: (id, callback) => {
-    const query = 'SELECT * FROM pengguna WHERE id_user = ?';
-    db.query(query, [id], (err, results) => {
-      if (err) {
-        callback(err, null);
-      } else {
-        callback(null, results[0]);
-      }
-    });
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
   },
-};
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, {
+  timestamps: true, // Enable timestamps (createdAt, updatedAt)
+  tableName: 'users', // Sesuaikan dengan nama tabel yang ada di DB
+});
 
 module.exports = User;
