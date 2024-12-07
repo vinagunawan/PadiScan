@@ -1,5 +1,5 @@
 const User = require('./user');
-const RiwayatPrediksi = require('./riwayatPrediksi');
 const PenyakitPadi = require('./penyakitPadi');
+const RiwayatPrediksi = require('./riwayatPrediksi');
 
-module.exports = { User, RiwayatPrediksi, PenyakitPadi };
+module.exports = { User, PenyakitPadi, RiwayatPrediksi };

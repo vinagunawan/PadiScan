@@ -2,10 +2,10 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const User = sequelize.define('User', {
-  id_user: { // Sesuaikan dengan kolom primary key
+  id_user: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true, // Agar auto increment
+    autoIncrement: true,
   },
   username: {
     type: DataTypes.STRING,
@@ -22,8 +22,8 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
 }, {
-  timestamps: true, // Enable timestamps (createdAt, updatedAt)
-  tableName: 'users', // Sesuaikan dengan nama tabel yang ada di DB
+  timestamps: true,
+  tableName: 'users',
 });
 
 module.exports = User;

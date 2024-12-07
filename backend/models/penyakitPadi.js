@@ -14,6 +14,9 @@ const PenyakitPadi = sequelize.define('PenyakitPadi', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+}, {
+  timestamps: false,
+  tableName: 'penyakit_padi',
 });
 
 module.exports = PenyakitPadi;

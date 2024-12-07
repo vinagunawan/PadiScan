@@ -7,13 +7,12 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: 'mysql',
-    logging: false, // Nonaktifkan logging jika tidak diperlukan
+    logging: false,
   }
 );
 
-// Cek koneksi
 sequelize.authenticate()
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.log('Error: ' + err));
+  .then(() => console.log('Database connected'))
+  .catch(err => console.error('Database connection error:', err));
 
 module.exports = sequelize;

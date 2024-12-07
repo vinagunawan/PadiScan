@@ -3,6 +3,15 @@ const sequelize = require('../config/database');
 const User = require('./user');
 
 const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
+  id_prediksi: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  id_user: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   image_path: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -11,10 +20,9 @@ const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  penanganan: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
+}, {
+  timestamps: true,
+  tableName: 'riwayat_prediksi',
 });
 
 RiwayatPrediksi.belongsTo(User, { foreignKey: 'id_user' });
