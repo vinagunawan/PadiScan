@@ -3,8 +3,6 @@ const bcrypt = require('bcrypt');
 const { User } = require('../models');
 const router = express.Router();
 
-router.use(express.json());
-
 // Endpoint untuk Registrasi Pengguna
 router.post('/register', async (req, res) => {
   try {
