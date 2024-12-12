@@ -17,22 +17,13 @@ const PenyakitPadi = sequelize.define('PenyakitPadi', {
   },
   penanganan: {
     type: DataTypes.TEXT,
-    allowNull: true, // Menyebabkan penanganan boleh kosong
+    allowNull: true, 
   },
-  created_at: {
-    type: DataTypes.TIMESTAMP,
-    defaultValue: DataTypes.NOW, // Mengatur default ke waktu sekarang
-    allowNull: false,
-  },
-  updated_at: {
-    type: DataTypes.TIMESTAMP,
-    defaultValue: DataTypes.NOW,
-    allowNull: false,
-    onUpdate: DataTypes.NOW, // Menyediakan pembaruan otomatis
-  }
 }, {
-  tableName: 'penyakit_padi', // Menyesuaikan dengan nama tabel di DB
-  timestamps: false, // Tidak menggunakan timestamps otomatis oleh Sequelize
+  tableName: 'penyakit_padi', 
+  timestamps: true, 
+  createdAt: 'created_at', 
+  updatedAt: 'updated_at', 
 });
 
 module.exports = PenyakitPadi;

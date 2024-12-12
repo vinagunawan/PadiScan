@@ -1,23 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
 import NavBarDashboard from './NavBarDashboard';
 
 function History() {
-  // Contoh data riwayat diagnosis, bisa diganti dengan data dari backend atau local storage
-  const historyData = [
-    {
-      id: 1,
-      date: '2024-12-01',
-      diagnosis: 'Tanaman padi sehat',
-      action: 'Tidak diperlukan tindakan',
-    },
-    {
-      id: 2,
-      date: '2024-11-28',
-      diagnosis: 'Hawar daun bakteri',
-      action: 'Semprotkan fungisida sesuai dosis',
-    },
-  ];
+  const [historyData, setHistoryData] = useState([]);  // State untuk menyimpan data riwayat
+  const [loading, setLoading] = useState(true);         // State untuk menandakan apakah data sedang diambil
+  const [error, setError] = useState(null);             // State untuk menangani error
+
+  // Mengambil data riwayat diagnosis dari backend
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/history'); // Ganti dengan URL backend Anda
+        const data = await response.json();
+        setHistoryData(data.history);  // Menyimpan data ke state
+      } catch (err) {
+        setError('Gagal mengambil data');
+      } finally {
+        setLoading(false);  // Mengubah loading menjadi false setelah data berhasil diambil
+      }
+    };
+
+    fetchHistory();
+  }, []);  // Empty array berarti efek ini hanya dijalankan sekali saat komponen dimuat
 
   return (
     <div className="bg-utama">
@@ -47,10 +52,18 @@ function History() {
           padding: 2,
         }}
       >
-        {historyData.length > 0 ? (
+        {loading ? (
+          <Typography variant="body2" sx={{ textAlign: 'center', marginTop: 4 }}>
+            Memuat riwayat...
+          </Typography>
+        ) : error ? (
+          <Typography variant="body2" sx={{ textAlign: 'center', marginTop: 4 }}>
+            {error}
+          </Typography>
+        ) : historyData.length > 0 ? (
           historyData.map((item) => (
             <Card
-              key={item.id}
+              key={item.id_prediksi}
               sx={{
                 maxWidth: 500,
                 width: '100%',
@@ -60,13 +73,13 @@ function History() {
             >
               <CardContent>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                  Tanggal: {item.date}
+                  Tanggal: {new Date(item.tanggal_prediksi).toLocaleDateString()}
                 </Typography>
                 <Typography variant="body1" sx={{ marginTop: 1 }}>
-                  Diagnosis: {item.diagnosis}
+                  Diagnosis: {item.PenyakitPadi ? item.PenyakitPadi.nama_penyakit : 'Tidak Diketahui'}
                 </Typography>
                 <Typography variant="body2" sx={{ marginTop: 1, color: 'gray' }}>
-                  Penanganan: {item.action}
+                  Penanganan: {item.penanganan || 'Tidak Diketahui'}
                 </Typography>
               </CardContent>
             </Card>

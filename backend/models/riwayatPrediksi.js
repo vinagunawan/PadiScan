@@ -21,7 +21,7 @@ const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
     allowNull: true,
   },
   tanggal_prediksi: {
-    type: DataTypes.TIMESTAMP,
+    type: DataTypes.DATE,  // Ganti ke DataTypes.DATE
     defaultValue: DataTypes.NOW, // Default ke waktu saat ini
     allowNull: false,
   },
