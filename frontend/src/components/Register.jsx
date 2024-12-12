@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Alert, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import '../App.css';
+import axios from "axios";  // Import axios
+import "../App.css";
 
 function Register() {
   const [name, setName] = useState("");
@@ -10,7 +11,7 @@ function Register() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
 
     if (!name || !email || !password) {
@@ -18,9 +19,26 @@ function Register() {
       return;
     }
 
-    // Simulasi registrasi berhasil
-    localStorage.setItem("isRegistered", "true");
-    navigate("/login"); // Ganti dengan halaman tujuan setelah registrasi
+    try {
+      // Kirimkan data ke backend untuk registrasi
+      const response = await axios.post("http://localhost:5000/api/auth/register", {
+        username: name,
+        email,
+        password,
+      });
+
+      // Jika registrasi berhasil, navigasi ke halaman login
+      if (response.status === 201) {
+        navigate("/login");  // Arahkan ke halaman login setelah registrasi berhasil
+      }
+    } catch (err) {
+      // Tangani jika ada error
+      if (err.response) {
+        setError(err.response.data.message);  // Menampilkan error dari backend
+      } else {
+        setError("Terjadi kesalahan. Silakan coba lagi.");
+      }
+    }
   };
 
   return (
