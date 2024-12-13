@@ -7,42 +7,26 @@ from skimage.feature import hog
 
 app = Flask(__name__)
 
-# Fungsi untuk memproses gambar (resize dan ekstraksi fitur HOG)
 def preprocess_image(image_file):
-    image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_GRAYSCALE)
-    image = cv2.resize(image, (128, 128))
-    fd, _ = hog(image, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=True)
-    return fd
+    image = cv2.imdecode(np.frombuffer(image_file, np.uint8), -1)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    resized_image = cv2.resize(gray_image, (128, 128))  # Resize to match model input
+    features, _ = hog(resized_image, block_norm='L2-Hys', pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=True)
+    return features.reshape(1, -1)
 
-# Fungsi untuk memuat model yang sudah disimpan
-def load_model(model_path):
-    return joblib.load(model_path)
-
-# Fungsi untuk prediksi gambar
-def predict(features, model):
-    return model.predict([features])[0]
-
-# Endpoint API untuk prediksi
 @app.route('/predict', methods=['POST'])
-def predict_api():
-    try:
-        # Memuat model yang sudah dilatih
-        model_path = 'static/model_decision_tree.pkl'
-        model = load_model(model_path)
+def predict():
+    if 'image' not in request.files:
+        return jsonify({'message': 'No image file provided'}), 400
+    
+    image_file = request.files['image'].read()
+    features = preprocess_image(image_file)
+    
+    # Ganti path file model menjadi model_decision_tree.pkl
+    model = joblib.load('static/model_decision_tree.pkl')  # Load model Decision Tree
+    prediction = model.predict(features)
 
-        # Memproses gambar yang diunggah
-        image_file = request.files['image']
-        features = preprocess_image(image_file)
+    return jsonify({'prediction': prediction[0]})
 
-        # Melakukan prediksi
-        result = predict(features, model)
-
-        # Mengirimkan hasil prediksi sebagai respon JSON
-        return jsonify({'prediction': result})
-
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-if __name__ == "__main__":
-    # Jalankan server Flask
+if __name__ == '__main__':
     app.run(debug=True)

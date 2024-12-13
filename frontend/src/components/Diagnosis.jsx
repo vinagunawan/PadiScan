@@ -6,18 +6,29 @@ import NavBarDashboard from './NavBarDashboard';
 function Diagnosis() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // Menyimpan gambar sebagai file
   const [loading, setLoading] = useState(false);
   const webcamRef = React.useRef(null);
   const navigate = useNavigate();
 
-  // Fungsi untuk menangkap foto dari kamera
   const capturePhoto = () => {
     const photo = webcamRef.current.getScreenshot();
     setImage(photo);
     setIsCameraOpen(false); // Menutup kamera setelah foto diambil
+
+    // Mengonversi gambar data URL ke file
+    const byteString = atob(photo.split(',')[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      view[i] = byteString.charCodeAt(i);
+    }
+
+    const blob = new Blob([view], { type: 'image/jpeg' });
+    const file = new File([blob], 'captured-image.jpg', { type: 'image/jpeg' });
+    setImageFile(file);
   };
 
-  // Fungsi untuk menangani unggahan gambar dari file
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -25,22 +36,21 @@ function Diagnosis() {
       setImage(reader.result); // Menampilkan gambar yang diunggah
     };
     if (file) {
+      setImageFile(file); // Menyimpan file gambar
       reader.readAsDataURL(file);
     }
   };
 
-  // Fungsi untuk mengirim foto ke backend
   const handleSubmit = async () => {
-    if (!image) {
+    if (!imageFile) {
       alert("Mohon unggah atau ambil foto terlebih dahulu!");
       return;
     }
     setLoading(true);
     try {
       const formData = new FormData();
-      formData.append("image", image); // Mengirim data gambar
+      formData.append("image", imageFile); // Mengirim file gambar
 
-      // Mengirim gambar ke backend menggunakan API /predict
       const response = await fetch('http://localhost:5000/predict', {
         method: 'POST',
         body: formData,

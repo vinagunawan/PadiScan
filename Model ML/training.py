@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 import joblib
 from skimage.feature import hog
 
@@ -39,10 +40,24 @@ def train_and_save_model(dataset_path, model_path):
         print("Error: Dataset is empty or invalid.")
         return
     
+    # Split data untuk training dan testing
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
     
+    # Inisialisasi dan latih model
     clf = DecisionTreeClassifier()
     clf.fit(X_train, y_train)
+
+    # Prediksi hasil untuk evaluasi
+    y_pred = clf.predict(X_test)
+
+    # Evaluasi model menggunakan metrik
+    print("Confusion Matrix:")
+    print(confusion_matrix(y_test, y_pred))
+    
+    print("Akurasi: ", accuracy_score(y_test, y_pred))
+    print("Presisi: ", precision_score(y_test, y_pred, average='weighted'))  # Menggunakan 'weighted' untuk multi-class
+    print("Recall: ", recall_score(y_test, y_pred, average='weighted'))
+    print("F1-Score: ", f1_score(y_test, y_pred, average='weighted'))
 
     # Simpan model
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
