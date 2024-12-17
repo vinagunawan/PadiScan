@@ -2,71 +2,77 @@ import React, { useState } from "react";
 import Webcam from "react-webcam";
 import { useNavigate } from "react-router-dom";
 import NavBarDashboard from './NavBarDashboard';
+import axios from 'axios';
 
 function Diagnosis() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(null); // Menyimpan gambar dalam bentuk URL
   const [imageFile, setImageFile] = useState(null); // Menyimpan gambar sebagai file
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Menyimpan status loading saat gambar dikirim
   const webcamRef = React.useRef(null);
   const navigate = useNavigate();
 
+  // Fungsi untuk menangkap foto dari webcam
   const capturePhoto = () => {
     const photo = webcamRef.current.getScreenshot();
-    setImage(photo);
+    setImage(photo);  // Menyimpan hasil screenshot dalam state image
     setIsCameraOpen(false); // Menutup kamera setelah foto diambil
 
-    // Mengonversi gambar data URL ke file
+    // Mengonversi data URL menjadi file
     const byteString = atob(photo.split(',')[1]);
+    const mimeString = photo.split(',')[0].split(':')[1].split(';')[0];
     const arrayBuffer = new ArrayBuffer(byteString.length);
-    const view = new Uint8Array(arrayBuffer);
+    const uintArray = new Uint8Array(arrayBuffer);
+
     for (let i = 0; i < byteString.length; i++) {
-      view[i] = byteString.charCodeAt(i);
+      uintArray[i] = byteString.charCodeAt(i);
     }
 
-    const blob = new Blob([view], { type: 'image/jpeg' });
-    const file = new File([blob], 'captured-image.jpg', { type: 'image/jpeg' });
-    setImageFile(file);
+    const file = new Blob([uintArray], { type: mimeString });
+    setImageFile(file); // Menyimpan file dalam state imageFile
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(reader.result); // Menampilkan gambar yang diunggah
-    };
+  // Fungsi untuk menangani perubahan file (pilih file dari komputer)
+  const handleFileChange = (event) => { // perbaikan
+    const file = event.target.files[0]; // Mengambil file pertama yang dipilih
     if (file) {
-      setImageFile(file); // Menyimpan file gambar
-      reader.readAsDataURL(file);
+      setImageFile(file);  // Menyimpan file dalam state
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);  // Menyimpan hasil pembacaan file dalam state image
+      };
+      reader.readAsDataURL(file); // Membaca file sebagai data URL
     }
   };
 
-  const handleSubmit = async () => {
+  // Fungsi untuk mengirim foto ke server Node.js
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
     if (!imageFile) {
-      alert("Mohon unggah atau ambil foto terlebih dahulu!");
+      alert("Please capture or choose an image before submitting.");
       return;
     }
-    setLoading(true);
+  
+    setLoading(true); // Set status loading saat gambar sedang dikirim
+    const formData = new FormData();
+    formData.append("file", imageFile); // Mengirimkan file gambar ke backend
+  
     try {
-      const formData = new FormData();
-      formData.append("image", imageFile); // Mengirim file gambar
-
-      const response = await fetch('http://localhost:5000/predict', {
-        method: 'POST',
-        body: formData,
+      // Kirim gambar ke backend Node.js untuk diteruskan ke Flask
+      const response = await axios.post("http://localhost:5000/api/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-
-      const data = await response.json();
-      if (data.prediction) {
-        navigate("/hasilDiagnosis", { state: { image, prediction: data.prediction } });
-      } else {
-        alert('Terjadi kesalahan dalam diagnosis');
-      }
-    } catch (error) {
-      console.error("Error uploading the image:", error);
-      alert("Terjadi kesalahan, coba lagi!");
-    } finally {
+  
+      const prediction = response.data.prediction;
+      alert("Prediction: " + prediction);
       setLoading(false);
+      navigate("/HasilPrediksi");
+    } catch (error) {
+      setLoading(false);
+      alert("Failed to upload image. Please try again.");
     }
   };
 

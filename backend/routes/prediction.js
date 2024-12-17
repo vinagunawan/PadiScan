@@ -1,59 +1,70 @@
 const express = require('express');
-const multer = require('multer');
 const axios = require('axios');
+const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const PenyakitPadi = require('../models/penyakitPadi');
-const router = express.Router();
+const FormData = require('form-data'); // Pastikan ini diimpor
 
-// Konfigurasi penyimpanan file menggunakan multer
+const router = express.Router(); // Gunakan Router bukan app
+
+// Konfigurasi multer untuk penyimpanan file
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './uploads'); // Tentukan folder untuk menyimpan file
+    const uploadDir = './uploads';
+    if (!fs.existsSync(uploadDir)) {
+      console.log('Uploads folder does not exist. Creating...');
+      fs.mkdirSync(uploadDir, { recursive: true }); // Pastikan folder ada
+    }
+    cb(null, uploadDir); // Tentukan folder untuk menyimpan file yang diupload
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Nama file unik
+    cb(null, Date.now() + path.extname(file.originalname)); // Menamai file yang diupload secara unik
   },
 });
+
+// Inisialisasi multer
 const upload = multer({ storage: storage });
 
-// Route untuk menerima gambar dan mengirim ke Flask
-router.post('/predict', upload.single('image'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No image file uploaded' });
-    }
-
-    const imagePath = path.join(__dirname, '../uploads', req.file.filename);
-
-    // Kirim gambar ke Flask untuk prediksi
-    const response = await axios.post('http://localhost:5000/predict', {
-      imagePath: imagePath,
-    });
-
-    // Mengambil hasil prediksi dari Flask
-    const predictionResult = response.data.result;
-
-    // Mendapatkan informasi penyakit padi dari database berdasarkan hasil prediksi
-    const penyakit = await PenyakitPadi.findOne({
-      where: {
-        nama_penyakit: predictionResult,
-      },
-    });
-
-    // Mengirimkan hasil prediksi dan penanganan penyakit padi
-    res.json({
-      prediction: predictionResult,
-      deskripsi: penyakit ? penyakit.deskripsi : 'Deskripsi tidak ditemukan',
-      penanganan: penyakit ? penyakit.penanganan : 'Penanganan tidak ditemukan',
-    });
-
-    // Hapus gambar setelah diproses
-    fs.unlinkSync(imagePath);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+// Endpoint untuk menerima file upload
+router.post('/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
   }
+
+  console.log('File uploaded:', req.file.path); // Log file path
+
+  // Kirim file gambar ke Flask sebagai form-data
+  const formData = new FormData();
+  formData.append('file', fs.createReadStream(req.file.path)); // Mengirimkan file gambar
+
+  // Menambahkan log untuk debugging
+  console.log('Sending file to Flask API for prediction...');
+  
+  axios.post('http://127.0.0.1:5002/predict', { filePath: req.file.path })
+
+    .then(response => {
+      console.log('Prediction response:', response.data); // Log response dari Flask API
+      res.status(200).json({ prediction: response.data.prediction });
+    })
+    .catch(error => {
+      console.error('Error during prediction request:', error.message); // log error message
+      console.error(error); // log full error untuk debugging
+
+      // Pastikan error dikirimkan ke client dengan pesan yang jelas
+      res.status(500).json({ message: 'Error in prediction API', error: error.message });
+    });
 });
 
+// Endpoint untuk melakukan prediksi (misalnya, menggunakan model machine learning)
+router.post('/predict', upload.single('file'), (req, res) => {
+  if (!filePath) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  const filePath = req.file.path;
+
+  res.json({ prediction: 'Prediksi berhasil berdasarkan file yang diupload' });
+});
+
+// Ekspor router
 module.exports = router;

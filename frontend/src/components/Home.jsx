@@ -35,24 +35,6 @@ function Home() {
       description: "Revolusi teknologi telah merambah ke berbagai sektor, termasuk pertanian. Di era digital ini, teknologi menawarkan solusi inovatif untuk meningkatkan produktivitas, efisiensi, dan kualitas hasil panen di sektor pertanian, terutama di daerah pedesaan.", 
       link: "https://gondoharum.kendalkab.go.id/kabardetail/OGtFamVXSUxUNlJ0WTFTRCtBc2VsUT09/teknologi-pertanian--kunci-untuk-meningkatkan-produktivitas-di-desa.html" 
     },
-    { id: 4, 
-      title: "Petani Padi Organik Kalisalak Manfaatkan Tanaman Padi Untuk Pupuk dan Herbisida", 
-      image: "/images/art4.png", 
-      description: "Hujan mulai mengguyur wilayah Kabupaten Magelang, sejumlah petani di Desa Kalisalak Kecamatan Salaman Kabupaten Magelang kembali bersemangat menggarap sawah. Mereka menanam padi organik varietas Srimulyo yang tersertifikasi.", 
-      link: "https://ppid.magelangkab.go.id/berita/petani-padi-organik-kalisalak-manfaatkan-tanaman-padi-untuk-pupuk-dan-herbisida" 
-    },
-    { id: 5, 
-      title: "Cara Pemupukan Padi yang Tepat untuk Optimalkan Hasil Panen", 
-      image: "/images/art5.png", 
-      description: "Cara pemupukan padi adalah salah satu kunci untuk mendapatkan hasil panen yang optimal dan tentunya melimpah. Jika salah dalam memberikan pupuk pada padi, bukannya panen melimpah yang akan didapat tapi justru risiko tanaman padi menjadi rusak.", 
-      link: "https://dero.desa.id/artikel/2022/12/11/cara-pemupukan-padi-yang-tepat-untuk-optimalkan-hasil-panen-sumber-httpspekutankec-miritkebum" 
-    },
-    { id: 6, 
-      title: "Penanganan Pasca Panen Padi", 
-      image: "/images/art6.png", 
-      description: "Pascapanen padi adalah serangkaian tahapan kegiatan yang meliputi pemungutan (pemanenan) malai, perontokan gabah, penampian, pengeringan, pengemasan, penyimpanan, dan pengolahan sampai siap dipasarkan atau dikonsumsi.", 
-      link: "https://dinpertanpangan.demakkab.go.id/?p=9866" 
-    },
   ];
 
   return (
