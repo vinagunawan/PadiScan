@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./user'); // Import model User
+const User = require('./user'); 
 
 const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
   id_prediksi: {
@@ -26,11 +26,11 @@ const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
     allowNull: false,
   },
 }, {
-  tableName: 'riwayat_prediksi', // Sesuaikan dengan nama tabel di DB
-  timestamps: false, // Menghindari penggunaan createdAt dan updatedAt otomatis oleh Sequelize
+  tableName: 'riwayat_prediksi', 
+  timestamps: false, 
 });
 
-// Relasi: RiwayatPrediksi belongs to User
+
 RiwayatPrediksi.belongsTo(User, { foreignKey: 'id_user' });
 
 module.exports = RiwayatPrediksi;

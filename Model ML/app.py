@@ -5,9 +5,10 @@ import joblib
 from flask import Flask, request, jsonify
 from skimage.feature import hog
 import logging
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -25,8 +26,6 @@ def predict():
     if file.filename == '':
         return 'No selected file', 400
     if file:
-        # Lakukan prediksi pada file
-        # log path atau nama file yang diterima
         print(f"File uploaded: {file.filename}")    
     try:
         # Read and process the image

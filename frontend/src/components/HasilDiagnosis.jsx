@@ -1,12 +1,14 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Typography, Card, CardContent } from '@mui/material';
+import { Box, Typography, Card, CardContent, Button, Container } from '@mui/material';
 import NavBarDashboard from './NavBarDashboard';
 
 function HasilDiagnosis() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { prediction, deskripsi, penanganan } = location.state || {}; // Mengambil data yang dikirim melalui state
+
+  // Mengambil data dari state yang dikirimkan
+  const { prediction, deskripsi, penanganan, image } = location.state || {};
 
   const handleHistory = () => {
     navigate('/history');
@@ -25,12 +27,14 @@ function HasilDiagnosis() {
           backgroundImage: "url('/images/home-1.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
         }}
       >
-        <Typography variant="h4">Hasil Diagnosis</Typography>
+        <Typography variant="h4" component="h1">Hasil Diagnosis</Typography>
       </header>
-      <Box className="container py-5">
-        <Card>
+
+      <Container className="py-5">
+        <Card variant="outlined">
           <CardContent>
             {prediction ? (
               <>
@@ -40,24 +44,47 @@ function HasilDiagnosis() {
                 <Typography variant="body1" paragraph>
                   <strong>Deskripsi:</strong> {deskripsi}
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" paragraph>
                   <strong>Penanganan:</strong> {penanganan}
                 </Typography>
+
+                {/* Menampilkan gambar jika ada */}
+                {image && (
+                  <div>
+                    <Typography variant="h6">Gambar Hasil Diagnosis</Typography>
+                    <img
+                      src={image}
+                      alt="Diagnosis"
+                      style={{ maxWidth: '100%', height: 'auto', marginTop: '20px' }}
+                    />
+                  </div>
+                )}
               </>
             ) : (
               <Typography variant="body1">Menunggu hasil diagnosis...</Typography>
             )}
           </CardContent>
         </Card>
-        <Box mt={3}>
-          <button onClick={handleDiagnosisUlang} className="btn btn-primary">
+
+        <Box mt={3} display="flex" justifyContent="space-between" gap={2}>
+          <Button
+            onClick={handleDiagnosisUlang}
+            variant="contained"
+            color="primary"
+            fullWidth
+          >
             Diagnosis Ulang
-          </button>
-          <button onClick={handleHistory} className="btn btn-secondary">
+          </Button>
+          <Button
+            onClick={handleHistory}
+            variant="outlined"
+            color="secondary"
+            fullWidth
+          >
             Lihat Riwayat Diagnosis
-          </button>
+          </Button>
         </Box>
-      </Box>
+      </Container>
     </div>
   );
 }

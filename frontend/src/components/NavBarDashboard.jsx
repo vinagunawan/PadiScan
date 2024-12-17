@@ -1,68 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Dropdown } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';  // Untuk memantau lokasi aktif
 
 const NavBarDashboard = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Contoh status login
-  const navigate = useNavigate(); // Hook untuk navigasi
+  const [isNavOpen, setIsNavOpen] = useState(false); // Menyimpan status navbar terbuka
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Status login, bisa diubah sesuai kebutuhan
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [prevScrollPos, setPrevScrollPos] = useState(0); 
+  const [visible, setVisible] = useState(true); 
 
+  // Efek untuk menutup navbar saat berpindah halaman
+  useEffect(() => {
+    setIsNavOpen(false);
+  }, [location]);
+
+  // Fungsi untuk menangani scroll
+  const handleScroll = () => {
+    const currentScrollPos = window.pageYOffset; 
+    setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
+    setPrevScrollPos(currentScrollPos);
+  };
+
+  // Hook untuk mendeteksi scroll event
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll); 
+    return () => {
+      window.removeEventListener('scroll', handleScroll); 
+    };
+  }, [prevScrollPos]);
+
+  // Fungsi untuk logout
   const handleLogout = () => {
-    // Proses logout, misalnya menghapus token atau sesi
-    setIsLoggedIn(false);
+    setIsLoggedIn(false); // Set status login menjadi false
     alert("Anda telah logout");
-
-    // Setelah logout, arahkan ke halaman Home
-    navigate('/');
+    navigate('/'); // Arahkan ke halaman Home setelah logout
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-utama">
-      <div className="container">
+    <Navbar 
+      className="navbar-fixed-top bg-utama" 
+      expand="lg" 
+      style={{ width: '100%', zIndex: '1000' }} 
+    >
+      <Container>
         {/* Logo */}
-        <Link className="navbar-brand" to="/">
+        <Navbar.Brand as={Link} to="/">
           <img 
             src="/images/logo1.png"
             alt="logo"
             style={{ height: '40px', width: 'auto' }}
           />
-        </Link>
+        </Navbar.Brand>
 
-        {/* Menu Navbar */}
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        {/* Link Menu */}
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
+        {/* Navbar Toggle untuk mobile */}
+        <Navbar.Toggle aria-controls="navbar-nav" onClick={() => setIsNavOpen(!isNavOpen)} />
+        
+        {/* Navbar Collapse untuk link */}
+        <Navbar.Collapse id="navbar-nav" in={isNavOpen}>
+          <Nav className="ms-auto">
             {/* Home Link */}
-            <li className="nav-item">
-              <Link className="nav-link" to="/">Home</Link>
-            </li>
+            <Nav.Link as={Link} to="/">Home</Nav.Link>
 
-            <li className="nav-item">
-              <Link className="nav-link" to="/dashboard">Dashboard</Link>
-            </li>
+            {/* Dashboard Link */}
+            <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
             
             {/* Profile Dropdown */}
             {isLoggedIn && (
-              <li className="nav-item">
+              <Nav.Item>
                 <Dropdown align="end">
                   <Dropdown.Toggle variant="link" id="dropdown-profile">
-                    {/* Ikon profil sebagai gambar PNG */}
+                    {/* Gambar Profil */}
                     <img src="/images/profile-icon.png" alt="Profile" style={{ width: '30px', height: '30px' }} />
                   </Dropdown.Toggle>
-
+                  
                   <Dropdown.Menu>
                     <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-              </li>
+              </Nav.Item>
             )}
-          </ul>
-        </div>
-      </div>
-    </nav>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 

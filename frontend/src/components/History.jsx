@@ -11,7 +11,7 @@ function History() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch('http://localhost:5000/history'); // Ganti dengan URL backend Anda
+        const response = await fetch('http://localhost:5000/api/history'); // Ganti dengan URL backend Anda
         const data = await response.json();
         setHistoryData(data.history);  // Menyimpan data ke state
       } catch (err) {
@@ -76,7 +76,7 @@ function History() {
                   Tanggal: {new Date(item.tanggal_prediksi).toLocaleDateString()}
                 </Typography>
                 <Typography variant="body1" sx={{ marginTop: 1 }}>
-                  Diagnosis: {item.PenyakitPadi ? item.PenyakitPadi.nama_penyakit : 'Tidak Diketahui'}
+                  Diagnosis: {item.hasil_prediksi}
                 </Typography>
                 <Typography variant="body2" sx={{ marginTop: 1, color: 'gray' }}>
                   Penanganan: {item.penanganan || 'Tidak Diketahui'}
