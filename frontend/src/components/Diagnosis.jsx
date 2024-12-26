@@ -41,10 +41,9 @@ function Diagnosis() {
   // Fungsi untuk menangani perubahan file (pilih file dari komputer)
   const handleFileChange = (event) => {
     const file = event.target.files[0]; // Mengambil file pertama yang dipilih
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith('image/')&& file.size <= 5 * 1024 * 1024) {
       setImageFile(file);  // Menyimpan file dalam state
       // Simpan gambar ke localStorage
-      localStorage.setItem("userImage", file);
     } else {
       alert("Please select a valid image file.");
     }
@@ -61,8 +60,9 @@ function Diagnosis() {
     
     setLoading(true); // Set status loading saat gambar sedang dikirim
     const formData = new FormData();
-    formData.append("file", imageFile); // Mengirimkan file gambar ke backend
-    
+    formData.append('file', imageFile);
+    formData.append('id_user', localStorage.getItem('id_user')); 
+
     try {
       // Kirim gambar ke backend Node.js untuk diteruskan ke Flask
       const response = await axios.post("http://localhost:5000/api/prediction/upload", formData);
@@ -76,7 +76,8 @@ function Diagnosis() {
         state: {
           prediction: response.data.prediction,  // Menyertakan data prediksi
           deskripsi: response.data.deskripsi,    // Data deskripsi penyakit
-          penanganan: response.data.penanganan   // Data penanganan penyakit
+          penanganan: response.data.penanganan,   // Data penanganan penyakit
+          image: URL.createObjectURL(imageFile)
         }
       });
     } catch (error) {

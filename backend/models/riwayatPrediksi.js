@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const User = require('./user'); 
+const penyakitPadi = require('./penyakitPadi')
 
 const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
   id_prediksi: {
@@ -21,8 +22,8 @@ const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
     allowNull: true,
   },
   tanggal_prediksi: {
-    type: DataTypes.DATE,  // Ganti ke DataTypes.DATE
-    defaultValue: DataTypes.NOW, // Default ke waktu saat ini
+    type: DataTypes.DATE,  
+    defaultValue: DataTypes.NOW, 
     allowNull: false,
   },
 }, {
@@ -30,7 +31,7 @@ const RiwayatPrediksi = sequelize.define('RiwayatPrediksi', {
   timestamps: false, 
 });
 
-
 RiwayatPrediksi.belongsTo(User, { foreignKey: 'id_user' });
+RiwayatPrediksi.belongsTo(penyakitPadi, { foreignKey: 'id_penyakit' });
 
 module.exports = RiwayatPrediksi;

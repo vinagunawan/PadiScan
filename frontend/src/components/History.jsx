@@ -1,33 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // Tambahkan navigate
 import NavBarDashboard from './NavBarDashboard';
 
 function History() {
-  const [historyData, setHistoryData] = useState([]);  // State untuk menyimpan data riwayat
-  const [loading, setLoading] = useState(true);         // State untuk menandakan apakah data sedang diambil
-  const [error, setError] = useState(null);             // State untuk menangani error
+  const [historyData, setHistoryData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Gunakan navigate untuk mengarahkan pengguna
 
-  // Mengambil data riwayat diagnosis dari backend
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/history'); // Ganti dengan URL backend Anda
+        const id_user = localStorage.getItem('id_user'); // Ambil id_user dari localStorage
+        if (!id_user) {
+          throw new Error('ID User tidak ditemukan. Silakan login kembali.');
+        }
+
+        const response = await fetch(`http://localhost:5000/api/history/${id_user}`); // Masukkan id_user ke URL
+        if (!response.ok) {
+          throw new Error('Gagal mengambil data');
+        }
         const data = await response.json();
-        setHistoryData(data.history);  // Menyimpan data ke state
+        setHistoryData(data.riwayat_prediksi);
       } catch (err) {
-        setError('Gagal mengambil data');
+        setError(err.message);
+        navigate('/login'); // Arahkan ke login jika gagal
       } finally {
-        setLoading(false);  // Mengubah loading menjadi false setelah data berhasil diambil
+        setLoading(false);
       }
     };
 
     fetchHistory();
-  }, []);  // Empty array berarti efek ini hanya dijalankan sekali saat komponen dimuat
+  }, [navigate]);
 
   return (
     <div className="bg-utama">
-      <NavBarDashboard/>
-      {/* Header */}
+      <NavBarDashboard />
       <header
         className="text-white text-center py-5"
         style={{
@@ -43,7 +52,6 @@ function History() {
         </div>
       </header>
 
-      {/* Konten Riwayat */}
       <Box
         sx={{
           display: 'flex',

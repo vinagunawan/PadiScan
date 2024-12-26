@@ -26,12 +26,19 @@ function Login() {
           password,
         });
 
-        // Jika login berhasil, redirect ke dashboard
-        if (response.data.message === "Login berhasil") {
-          navigate("/dashboard");
+        console.log("Response dari API Login:", response.data);
+
+        const {id_user, message} = response.data;
+        
+        if (id_user) {
+          localStorage.setItem('id_user', id_user);
+          console.log("ID User yang disimpan:", localStorage.getItem('id_user')); // Debug untuk memastikan
+          alert(message);
+          navigate("/diagnosis");
+        } else {
+          alert("Login gagal: ID User tidak ditemukan.");
         }
       } catch (err) {
-        // Tangani error dari backend
         setError(err.response ? err.response.data.message : "Terjadi kesalahan");
       } finally {
         setLoading(false); // Menyembunyikan proses loading

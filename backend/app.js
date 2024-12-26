@@ -4,7 +4,7 @@ const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
 const axios = require('axios');
-require('./models');
+require('./models').default;
 const authRoutes = require('./routes/auth');
 const historyRoutes = require('./routes/history');
 const predictionRoutes = require('./routes/prediction');
