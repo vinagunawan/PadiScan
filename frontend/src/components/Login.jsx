@@ -34,7 +34,7 @@ function Login() {
           localStorage.setItem('id_user', id_user);
           console.log("ID User yang disimpan:", localStorage.getItem('id_user')); // Debug untuk memastikan
           alert(message);
-          navigate("/diagnosis");
+          navigate("/dashboard");
         } else {
           alert("Login gagal: ID User tidak ditemukan.");
         }

@@ -60,9 +60,6 @@ const NavBarDashboard = () => {
         {/* Navbar Collapse untuk link */}
         <Navbar.Collapse id="navbar-nav" in={isNavOpen}>
           <Nav className="ms-auto">
-            {/* Home Link */}
-            <Nav.Link as={Link} to="/">Home</Nav.Link>
-
             {/* Dashboard Link */}
             <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
             
