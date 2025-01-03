@@ -21,7 +21,7 @@ function Register() {
 
     try {
       // Kirimkan data ke backend untuk registrasi
-      const response = await axios.post("http://localhost:5000/api/auth/register", {
+      const response = await axios.post("http://192.168.1.100/api/auth/register", {
         username: name,
         email,
         password,

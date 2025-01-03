@@ -17,7 +17,7 @@ function History() {
           throw new Error('ID User tidak ditemukan. Silakan login kembali.');
         }
 
-        const response = await fetch(`http://localhost:5000/api/history/${id_user}`); // Masukkan id_user ke URL
+        const response = await fetch(`http://192.168.1.100/api/history/${id_user}`); // Masukkan id_user ke URL
         if (!response.ok) {
           throw new Error('Gagal mengambil data');
         }
