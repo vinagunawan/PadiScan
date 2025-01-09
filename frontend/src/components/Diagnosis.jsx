@@ -65,7 +65,7 @@ function Diagnosis() {
 
     try {
       // Kirim gambar ke backend Node.js untuk diteruskan ke Flask
-      const response = await axios.post("http://192.168.1.100/api/prediction/upload", formData);
+      const response = await axios.post("http://192.168.10.24:5000/api/prediction/upload", formData);
       
       const prediction = response.data.prediction;
       alert("Prediction: " + prediction);

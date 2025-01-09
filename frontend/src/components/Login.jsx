@@ -21,7 +21,7 @@ function Login() {
 
       try {
         // Mengirimkan data login ke backend menggunakan axios
-        const response = await axios.post("http://192.168.1.100/api/auth/login",{
+        const response = await axios.post("http://192.168.10.24:5000/api/auth/login",{
           email,
           password,
         });
