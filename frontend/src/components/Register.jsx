@@ -21,7 +21,7 @@ function Register() {
 
     try {
       // Kirimkan data ke backend untuk registrasi
-      const response = await axios.post("http://192.168.10.24:5000/api/auth/register", {
+      const response = await axios.post("http://realdev4.psti.undiknas.ac.id:5000/api/auth/register", {
         username: name,
         email,
         password,

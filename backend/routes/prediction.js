@@ -53,7 +53,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     console.log('Sending file to Flask API for prediction...');
 
     // Mengirim file ke server Flask untuk prediksi
-    const response = await axios.post('http://192.168.1.100:5002/predict', formData, {
+    const response = await axios.post('http://realdev4.psti.undiknas.ac.id:5002/predict', formData, {
       headers: formData.getHeaders(),
     });
 
